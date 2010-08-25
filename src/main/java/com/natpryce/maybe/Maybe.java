@@ -1,10 +1,10 @@
 package com.natpryce.maybe;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-
 import java.util.Collections;
 import java.util.Iterator;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 public abstract class Maybe<T> implements Iterable<T> {
     public abstract boolean isKnown();
@@ -79,12 +79,12 @@ public abstract class Maybe<T> implements Iterable<T> {
         }
 
         public Iterator<T> iterator() {
-            return Collections.singleton(theValue).iterator();
+            return Collections.singleton(this.theValue).iterator();
         }
 
         @Override
         public T otherwise(T defaultValue) {
-            return theValue;
+            return this.theValue;
         }
 
         @Override
@@ -92,21 +92,23 @@ public abstract class Maybe<T> implements Iterable<T> {
             return this;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public <U> Maybe<U> to(Function<? super T, ? extends U> mapping) {
-            return definitely(mapping.apply(theValue));
+            return (Maybe<U>)definitely(mapping.apply(this.theValue));
         }
 
         @Override
         public Maybe<Boolean> query(Predicate<? super T> mapping) {
-            return definitely(mapping.apply(theValue));
+            return definitely(mapping.apply(this.theValue));
         }
 
         @Override
         public String toString() {
-            return "definitely " + theValue.toString();
+            return "definitely " + this.theValue.toString();
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -114,13 +116,13 @@ public abstract class Maybe<T> implements Iterable<T> {
 
             DefiniteValue that = (DefiniteValue) o;
 
-            return theValue.equals(that.theValue);
+            return this.theValue.equals(that.theValue);
 
         }
 
         @Override
         public int hashCode() {
-            return theValue.hashCode();
+            return this.theValue.hashCode();
         }
     }
 }
