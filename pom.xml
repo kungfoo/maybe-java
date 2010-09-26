@@ -3,7 +3,7 @@
 	<groupId>com.natpryce.maybe</groupId>
 	<artifactId>com.natpryce.maybe</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>maybe-java</name>
 	<dependencies>
 		<dependency>

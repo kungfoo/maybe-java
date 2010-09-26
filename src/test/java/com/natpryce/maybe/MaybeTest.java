@@ -13,6 +13,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.natpryce.maybe.Maybe.definitely;
 import static com.natpryce.maybe.Maybe.unknown;
+import static com.natpryce.maybe.Maybe.wrap;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
@@ -130,7 +131,26 @@ public class MaybeTest {
                 "bob@example.com",
                 "alice@example.com")));
     }
+    
+    @Test
+    public void valueOnDefinitelyReturnsActualValue() {
+       assertThat("hello", equalTo(definitely("hello").value()));
+    }
+    
+    @Test (expected = UnsupportedOperationException.class)
+    public void valueOnUnknownThrowsException() {
+        unknown().value();
+    }
 
+    @Test
+    public void wrapStringReturnsDefinitelyForString() {
+        assertThat(definitely("hello"), equalTo(wrap("hello")));
+    }
+
+    @Test
+    public void wrapNullReturnsUnknown() {
+        assertThat(wrap(null).isKnown(), equalTo(false));
+    }
 
     static final Function<Customer, Maybe<String>> emailAddress = new Function<Customer, Maybe<String>>() {
         public Maybe<String> apply(Customer c) {

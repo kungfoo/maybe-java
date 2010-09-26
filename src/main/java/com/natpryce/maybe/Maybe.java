@@ -8,11 +8,17 @@ import com.google.common.base.Predicate;
 
 public abstract class Maybe<T> implements Iterable<T> {
     public abstract boolean isKnown();
+
     public abstract T otherwise(T defaultValue);
+
     public abstract Maybe<T> otherwise(Maybe<T> maybeDefaultValue);
+
     public abstract <U> Maybe<U> to(Function<? super T, ? extends U> mapping);
+
     public abstract Maybe<Boolean> query(Predicate<? super T> mapping);
-    
+
+    public abstract T value();
+
     public static <T> Maybe<T> unknown() {
         return new Maybe<T>() {
             @Override
@@ -20,6 +26,7 @@ public abstract class Maybe<T> implements Iterable<T> {
                 return false;
             }
 
+            @Override
             public Iterator<T> iterator() {
                 return Collections.<T>emptyList().iterator();
             }
@@ -59,6 +66,11 @@ public abstract class Maybe<T> implements Iterable<T> {
             public int hashCode() {
                 return 0;
             }
+
+            @Override
+            public T value() {
+                throw new UnsupportedOperationException();
+            }
         };
     }
 
@@ -78,6 +90,7 @@ public abstract class Maybe<T> implements Iterable<T> {
             return true;
         }
 
+        @Override
         public Iterator<T> iterator() {
             return Collections.singleton(this.theValue).iterator();
         }
@@ -108,13 +121,14 @@ public abstract class Maybe<T> implements Iterable<T> {
             return "definitely " + this.theValue.toString();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if(this == o)
+                return true;
+            if(o == null || getClass() != o.getClass())
+                return false;
 
-            DefiniteValue that = (DefiniteValue) o;
+            DefiniteValue<?> that = (DefiniteValue<?>)o;
 
             return this.theValue.equals(that.theValue);
 
@@ -124,5 +138,15 @@ public abstract class Maybe<T> implements Iterable<T> {
         public int hashCode() {
             return this.theValue.hashCode();
         }
+
+        @Override
+        public T value() {
+            return this.theValue;
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> Maybe<T> wrap(final T value) {
+        return (Maybe<T>)((value == null) ? Maybe.unknown() : Maybe.definitely(value));
     }
 }
